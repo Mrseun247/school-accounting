@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Accounting System</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f4f4f4; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #333; }
+        .tabs { display: flex; border-bottom: 1px solid #ddd; }
+        .tab { padding: 10px 20px; cursor: pointer; background: #f9f9f9; border: none; }
+        .tab.active { background: white; border-bottom: 2px solid #007bff; }
+        .tab-content { display: none; padding: 20px 0; }
+        .tab-content.active { display: block; }
+        form { margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        button { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+        th { background: #f9f9f9; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>School Accounting System</h1>
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('register-student')">Register Student</button>
+            <button class="tab" onclick="showTab('register-fee')">Register Fee</button>
+            <button class="tab" onclick="showTab('record-payment')">Record Payment</button>
+            <button class="tab" onclick="showTab('search-student')">Search Student</button>
+            <button class="tab" onclick="showTab('generate-report')">Generate Report</button>
+        </div>
+
+        <div id="register-student" class="tab-content active">
+            <h2>Register Student</h2>
+            <form id="student-form">
+                <div class="form-group">
+                    <label for="student-name">Name</label>
+                    <input type="text" id="student-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="student-class">Class</label>
+                    <input type="text" id="student-class" required>
+                </div>
+                <div class="form-group">
+                    <label for="student-email">Email</label>
+                    <input type="email" id="student-email" required>
+                </div>
+                <button type="submit">Register Student</button>
+                <div id="student-message"></div>
+            </form>
+        </div>
+
+        <div id="register-fee" class="tab-content">
+            <h2>Register Fee</h2>
+            <form id="fee-form">
+                <div class="form-group">
+                    <label for="fee-term">Term</label>
+                    <input type="text" id="fee-term" placeholder="e.g., Term 1 2023" required>
+                </div>
+                <div class="form-group">
+                    <label for="fee-amount">Amount</label>
+                    <input type="number" id="fee-amount" step="0.01" required>
+                </div>
+                <button type="submit">Register Fee</button>
+                <div id="fee-message"></div>
+            </form>
+        </div>
+
+        <div id="record-payment" class="tab-content">
+            <h2>Record Payment</h2>
+            <form id="payment-form">
+                <div class="form-group">
+                    <label for="payment-student-id">Student ID</label>
+                    <input type="text" id="payment-student-id" required>
+                </div>
+                <div class="form-group">
+                    <label for="payment-fee-id">Fee ID</label>
+                    <input type="text" id="payment-fee-id" required>
+                </div>
+                <div class="form-group">
+                    <label for="payment-amount">Amount Paid</label>
+                    <input type="number" id="payment-amount" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="payment-date">Date</label>
+                    <input type="date" id="payment-date" required>
+                </div>
+                <button type="submit">Record Payment</button>
+                <div id="payment-message"></div>
+            </form>
+        </div>
+
+        <div id="search-student" class="tab-content">
+            <h2>Search Student</h2>
+            <form id="search-form">
+                <div class="form-group">
+                    <label for="search-query">Search by Name or ID</label>
+                    <input type="text" id="search-query" required>
+                </div>
+                <button type="submit">Search</button>
+            </form>
+            <table id="search-results">
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Class</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div id="generate-report" class="tab-content">
+            <h2>Generate Report</h2>
+            <form id="report-form">
+                <div class="form-group">
+                    <label for="report-term">Term</label>
+                    <input type="text" id="report-term" placeholder="e.g., Term 1 2023" required>
+                </div>
+                <button type="submit">Generate Report</button>
+            </form>
+            <table id="report-results">
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Class</th>
+                        <th>Amount Paid</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyjbJdlWhWJs0GQtvKmUpV25tlv3KJtmcnNNz6GvaYqRRs-Dkd2PtCpUjfEteP2rXMDgg/exec'; // Replace with your script ID
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Register Student
+        document.getElementById('student-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('student-name').value;
+            const className = document.getElementById('student-class').value;
+            const email = document.getElementById('student-email').value;
+            const message = document.getElementById('student-message');
+
+            try {
+                const params = new URLSearchParams({ action: 'addStudent', name, class: className, email });
+                const response = await fetch(`${scriptURL}?${params}`);
+                const result = await response.json();
+                if (result.success) {
+                    message.className = 'success';
+                    message.textContent = 'Student registered successfully!';
+                    e.target.reset();
+                } else {
+                    message.className = 'error';
+                    message.textContent = result.message;
+                }
+            } catch (err) {
+                message.className = 'error';
+                message.textContent = 'Error registering student.';
+            }
+        });
+
+        // Register Fee
+        document.getElementById('fee-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const term = document.getElementById('fee-term').value;
+            const amount = document.getElementById('fee-amount').value;
+            const message = document.getElementById('fee-message');
+
+            try {
+                const params = new URLSearchParams({ action: 'addFee', term, amount });
+                const response = await fetch(`${scriptURL}?${params}`);
+                const result = await response.json();
+                if (result.success) {
+                    message.className = 'success';
+                    message.textContent = 'Fee registered successfully!';
+                    e.target.reset();
+                } else {
+                    message.className = 'error';
+                    message.textContent = result.message;
+                }
+            } catch (err) {
+                message.className = 'error';
+                message.textContent = 'Error registering fee.';
+            }
+        });
+
+        // Record Payment
+        document.getElementById('payment-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const studentID = document.getElementById('payment-student-id').value;
+            const feeID = document.getElementById('payment-fee-id').value;
+            const amountPaid = document.getElementById('payment-amount').value;
+            const date = document.getElementById('payment-date').value;
+            const message = document.getElementById('payment-message');
+
+            try {
+                const params = new URLSearchParams({ action: 'addPayment', studentID, feeID, amountPaid, date });
+                const response = await fetch(`${scriptURL}?${params}`);
+                const result = await response.json();
+                if (result.success) {
+                    message.className = 'success';
+                    message.textContent = 'Payment recorded successfully!';
+                    e.target.reset();
+                } else {
+                    message.className = 'error';
+                    message.textContent = result.message;
+                }
+            } catch (err) {
+                message.className = 'error';
+                message.textContent = 'Error recording payment.';
+            }
+        });
+
+        // Search Student
+        document.getElementById('search-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const query = document.getElementById('search-query').value;
+            const tbody = document.querySelector('#search-results tbody');
+            tbody.innerHTML = '';
+
+            try {
+                const params = new URLSearchParams({ action: 'searchStudent', query });
+                const response = await fetch(`${scriptURL}?${params}`);
+                const result = await response.json();
+                if (result.success) {
+                    result.students.forEach(student => {
+                        const row = `<tr>
+                            <td>${student.id}</td>
+                            <td>${student.name}</td>
+                            <td>${student.class}</td>
+                            <td>${student.email}</td>
+                        </tr>`;
+                        tbody.innerHTML += row;
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="4" class="error">' + result.message + '</td></tr>';
+                }
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="4" class="error">Error searching students.</td></tr>';
+            }
+        });
+
+        // Generate Report
+        document.getElementById('report-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const term = document.getElementById('report-term').value;
+            const tbody = document.querySelector('#report-results tbody');
+            tbody.innerHTML = '';
+
+            try {
+                const params = new URLSearchParams({ action: 'getReport', term });
+                const response = await fetch(`${scriptURL}?${params}`);
+                const result = await response.json();
+                if (result.success) {
+                    result.payments.forEach(payment => {
+                        const row = `<tr>
+                            <td>${payment.studentID}</td>
+                            <td>${payment.name}</td>
+                            <td>${payment.class}</td>
+                            <td>${payment.amountPaid}</td>
+                        </tr>`;
+                        tbody.innerHTML += row;
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="4" class="error">' + result.message + '</td></tr>';
+                }
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="4" class="error">Error generating report.</td></tr>';
+            }
+        });
+    </script>
+</body>
+</html>
