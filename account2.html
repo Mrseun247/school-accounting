@@ -8,9 +8,10 @@
         body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f4f4f4; }
         .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
         h1 { text-align: center; color: #333; }
-        .tabs { display: flex; border-bottom: 1px solid #ddd; }
-        .tab { padding: 10px 20px; cursor: pointer; background: #f9f9f9; border: none; }
-        .tab.active { background: white; border-bottom: 2px solid #007bff; }
+        .tabs { display: flex; border-bottom: 2px solid #ddd; background: #f0f0f0; border-radius: 4px 4px 0 0; }
+        .tab { padding: 12px 20px; cursor: pointer; background: #e9ecef; border: none; margin-right: 5px; font-weight: 500; color: #555; border-radius: 4px 4px 0 0; transition: all 0.3s ease; }
+        .tab:hover { background: #d9d9d9; color: #333; }
+        .tab.active { background: #007bff; color: white; border-bottom: 3px solid #0056b3; }
         .tab-content { display: none; padding: 20px 0; }
         .tab-content.active { display: block; }
         form { margin-bottom: 20px; }
@@ -24,6 +25,63 @@
         th { background: #f9f9f9; }
         .error { color: red; }
         .success { color: green; }
+        .fee-checkbox-group { 
+            margin-bottom: 12px; 
+            padding: 12px; 
+            background: #f8f9fa; 
+            border-left: 4px solid #007bff; 
+            border-radius: 4px;
+        }
+        .fee-checkbox-group label { 
+            margin: 0; 
+            display: flex; 
+            align-items: center; 
+            cursor: pointer;
+            font-weight: 500;
+            color: #333;
+        }
+        .fee-checkbox-group input[type="checkbox"] { 
+            margin-right: 12px; 
+            cursor: pointer;
+            width: auto;
+            height: 18px;
+            width: 18px;
+            accent-color: #007bff;
+        }
+        .fee-checkbox-group .fee-amount {
+            margin-left: auto;
+            font-weight: bold;
+            color: #007bff;
+            padding-left: 20px;
+        }
+        #load-student-fees { 
+            padding: 10px 20px; 
+            margin-left: 10px; 
+            margin-top: -2px;
+            background: #28a745; 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer;
+            font-weight: 500;
+        }
+        #load-student-fees:hover { 
+            background: #218838; 
+        }
+        .student-id-group {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            margin-bottom: 20px;
+        }
+        .student-id-group .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        .student-id-group #load-student-fees {
+            margin-left: 0;
+            margin-top: 0;
+        }
     </style>
 </head>
 <body>
@@ -46,11 +104,27 @@
                 </div>
                 <div class="form-group">
                     <label for="student-class">Class</label>
-                    <input type="text" id="student-class" required>
+                    <select id="student-class" required>
+                        <option value="">-- Select Class --</option>
+                        <option value="JSS1">JSS1</option>
+                        <option value="JSS2">JSS2</option>
+                        <option value="JSS3">JSS3</option>
+                        <option value="SSS1">SSS1</option>
+                        <option value="SSS2">SSS2</option>
+                        <option value="SSS3">SSS3</option>
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label for="student-email">Email</label>
-                    <input type="email" id="student-email" required>
+                    <label for="student-gender">Gender</label>
+                    <select id="student-gender" required>
+                        <option value="">-- Select Gender --</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="student-parent">Parent/Guardian Name</label>
+                    <input type="text" id="student-parent" required>
                 </div>
                 <button type="submit">Register Student</button>
                 <div id="student-message"></div>
@@ -62,12 +136,70 @@
             <form id="fee-form">
                 <div class="form-group">
                     <label for="fee-term">Term</label>
-                    <input type="text" id="fee-term" placeholder="e.g., Term 1 2023" required>
+                    <input type="text" id="fee-term" placeholder="e.g., Term 1 2024" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fee-class">Class</label>
+                    <select id="fee-class" required>
+                        <option value="">-- Select Class --</option>
+                        <option value="JSS1">JSS1</option>
+                        <option value="JSS2">JSS2</option>
+                        <option value="JSS3">JSS3</option>
+                        <option value="SSS1">SSS1</option>
+                        <option value="SSS2">SSS2</option>
+                        <option value="SSS3">SSS3</option>
+                    </select>
+                </div>
+                
+                <h3>Fee Breakdown</h3>
+                
+                <div class="form-group">
+                    <label for="fee-tuition">Tuition Fee</label>
+                    <input type="number" id="fee-tuition" step="0.01" value="0">
                 </div>
                 <div class="form-group">
-                    <label for="fee-amount">Amount</label>
-                    <input type="number" id="fee-amount" step="0.01" required>
+                    <label for="fee-uniform">Uniform</label>
+                    <input type="number" id="fee-uniform" step="0.01" value="0">
                 </div>
+                <div class="form-group">
+                    <label for="fee-exam">Exam Fee</label>
+                    <input type="number" id="fee-exam" step="0.01" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="fee-club">Club Activity Fee</label>
+                    <input type="number" id="fee-club" step="0.01" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="fee-books">Books</label>
+                    <input type="number" id="fee-books" step="0.01" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="fee-pta">PTA</label>
+                    <input type="number" id="fee-pta" step="0.01" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="fee-ict">ICT</label>
+                    <input type="number" id="fee-ict" step="0.01" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="fee-coding">Coding Fee</label>
+                    <input type="number" id="fee-coding" step="0.01" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="fee-library">Library</label>
+                    <input type="number" id="fee-library" step="0.01" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="fee-lab">Lab Fee</label>
+                    <input type="number" id="fee-lab" step="0.01" value="0">
+                </div>
+                
+                <div class="form-group" style="background: #f9f9f9; padding: 10px; border-radius: 4px;">
+                    <label><strong>Total Amount:</strong></label>
+                    <input type="number" id="fee-total" step="0.01" readonly value="0" style="font-weight: bold; font-size: 1.1em; background: #f0f0f0;">
+                </div>
+                
                 <button type="submit">Register Fee</button>
                 <div id="fee-message"></div>
             </form>
@@ -76,23 +208,65 @@
         <div id="record-payment" class="tab-content">
             <h2>Record Payment</h2>
             <form id="payment-form">
-                <div class="form-group">
-                    <label for="payment-student-id">Student ID</label>
-                    <input type="text" id="payment-student-id" required>
+                <div class="student-id-group">
+                    <div class="form-group">
+                        <label for="payment-student-id">Student ID</label>
+                        <input type="text" id="payment-student-id" placeholder="Enter student ID" required>
+                    </div>
+                    <button type="button" id="load-student-fees">Load Fees</button>
                 </div>
-                <div class="form-group">
-                    <label for="payment-fee-id">Fee ID</label>
-                    <input type="text" id="payment-fee-id" required>
+                
+                <div id="student-info" style="display:none; background: #e8f4f8; padding: 15px; border-radius: 4px; margin-bottom: 20px; border-left: 4px solid #17a2b8;">
+                    <p style="margin: 8px 0;"><strong>Student:</strong> <span id="student-name-display" style="color: #007bff;"></span></p>
+                    <p style="margin: 8px 0;"><strong>Class:</strong> <span id="student-class-display" style="color: #007bff;"></span></p>
                 </div>
-                <div class="form-group">
-                    <label for="payment-amount">Amount Paid</label>
-                    <input type="number" id="payment-amount" step="0.01" required>
+
+                <div id="fees-section" style="display:none;">
+                    <h3 style="margin-top: 0; color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px;">Select Fees to Pay</h3>
+                    <p style="color: #666; margin-bottom: 15px;">Check the fee items you want to pay for:</p>
+                    
+                    <div class="fee-checkbox-group">
+                        <label><input type="checkbox" name="fee-item" value="tuition" data-amount="0"> Tuition <span class="fee-amount">0</span></label>
+                    </div>
+                    <div class="fee-checkbox-group">
+                        <label><input type="checkbox" name="fee-item" value="uniform" data-amount="0"> Uniform <span class="fee-amount">0</span></label>
+                    </div>
+                    <div class="fee-checkbox-group">
+                        <label><input type="checkbox" name="fee-item" value="exam" data-amount="0"> Exam Fee <span class="fee-amount">0</span></label>
+                    </div>
+                    <div class="fee-checkbox-group">
+                        <label><input type="checkbox" name="fee-item" value="club" data-amount="0"> Club Activity <span class="fee-amount">0</span></label>
+                    </div>
+                    <div class="fee-checkbox-group">
+                        <label><input type="checkbox" name="fee-item" value="books" data-amount="0"> Books <span class="fee-amount">0</span></label>
+                    </div>
+                    <div class="fee-checkbox-group">
+                        <label><input type="checkbox" name="fee-item" value="pta" data-amount="0"> PTA <span class="fee-amount">0</span></label>
+                    </div>
+                    <div class="fee-checkbox-group">
+                        <label><input type="checkbox" name="fee-item" value="ict" data-amount="0"> ICT <span class="fee-amount">0</span></label>
+                    </div>
+                    <div class="fee-checkbox-group">
+                        <label><input type="checkbox" name="fee-item" value="coding" data-amount="0"> Coding Fee <span class="fee-amount">0</span></label>
+                    </div>
+                    <div class="fee-checkbox-group">
+                        <label><input type="checkbox" name="fee-item" value="library" data-amount="0"> Library <span class="fee-amount">0</span></label>
+                    </div>
+                    <div class="fee-checkbox-group">
+                        <label><input type="checkbox" name="fee-item" value="lab" data-amount="0"> Lab Fee <span class="fee-amount">0</span></label>
+                    </div>
+                    
+                    <div class="form-group" style="background: #e7f3ff; padding: 15px; border-radius: 4px; margin-top: 20px; border-left: 4px solid #007bff;">
+                        <label style="margin-bottom: 10px;"><strong>Total Amount to Pay:</strong></label>
+                        <input type="number" id="payment-amount" step="0.01" readonly value="0" style="font-weight: bold; font-size: 1.2em; background: white; color: #007bff;">
+                    </div>
                 </div>
+                
                 <div class="form-group">
-                    <label for="payment-date">Date</label>
+                    <label for="payment-date">Payment Date</label>
                     <input type="date" id="payment-date" required>
                 </div>
-                <button type="submit">Record Payment</button>
+                <button type="submit" id="submit-payment" style="display:none;">Record Payment</button>
                 <div id="payment-message"></div>
             </form>
         </div>
@@ -143,7 +317,7 @@
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyjbJdlWhWJs0GQtvKmUpV25tlv3KJtmcnNNz6GvaYqRRs-Dkd2PtCpUjfEteP2rXMDgg/exec'; // Replace with your script ID
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwuDhwHzp3qAf95_J43Njghy6s6jY5PuHYygc6OVt8o2ONyzHhp9XavQ18FckRU15TQ/exec';
 
         function showTab(tabId) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -152,96 +326,244 @@
             document.getElementById(tabId).classList.add('active');
         }
 
+        // Helper function for JSONP requests
+        function makeJsonpRequest(params, callback) {
+            const callbackName = 'jsonpCallback_' + Date.now();
+            window[callbackName] = function(data) {
+                callback(data);
+                delete window[callbackName];
+            };
+            
+            const url = new URL(scriptURL);
+            url.searchParams.append('callback', callbackName);
+            Object.keys(params).forEach(key => {
+                url.searchParams.append(key, params[key]);
+            });
+            
+            const script = document.createElement('script');
+            script.src = url.toString();
+            script.onerror = function() {
+                callback({ success: false, message: 'Request failed' });
+                delete window[callbackName];
+            };
+            document.head.appendChild(script);
+        }
+
         // Register Student
-        document.getElementById('student-form').addEventListener('submit', async (e) => {
+        document.getElementById('student-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const name = document.getElementById('student-name').value;
             const className = document.getElementById('student-class').value;
-            const email = document.getElementById('student-email').value;
+            const gender = document.getElementById('student-gender').value;
+            const parentName = document.getElementById('student-parent').value;
             const message = document.getElementById('student-message');
 
-            try {
-                const params = new URLSearchParams({ action: 'addStudent', name, class: className, email });
-                const response = await fetch(`${scriptURL}?${params}`);
-                const result = await response.json();
+            makeJsonpRequest({ action: 'addStudent', name, class: className, gender, parentName }, (result) => {
                 if (result.success) {
                     message.className = 'success';
-                    message.textContent = 'Student registered successfully!';
+                    message.textContent = 'Student registered successfully! ID: ' + result.studentID;
                     e.target.reset();
                 } else {
                     message.className = 'error';
-                    message.textContent = result.message;
+                    message.textContent = result.message || 'Error registering student.';
                 }
-            } catch (err) {
-                message.className = 'error';
-                message.textContent = 'Error registering student.';
-            }
+            });
+        });
+
+        // Calculate total fee
+        function calculateTotal() {
+            const tuition = parseFloat(document.getElementById('fee-tuition').value) || 0;
+            const uniform = parseFloat(document.getElementById('fee-uniform').value) || 0;
+            const exam = parseFloat(document.getElementById('fee-exam').value) || 0;
+            const club = parseFloat(document.getElementById('fee-club').value) || 0;
+            const books = parseFloat(document.getElementById('fee-books').value) || 0;
+            const pta = parseFloat(document.getElementById('fee-pta').value) || 0;
+            const ict = parseFloat(document.getElementById('fee-ict').value) || 0;
+            const coding = parseFloat(document.getElementById('fee-coding').value) || 0;
+            const library = parseFloat(document.getElementById('fee-library').value) || 0;
+            const lab = parseFloat(document.getElementById('fee-lab').value) || 0;
+            
+            const total = tuition + uniform + exam + club + books + pta + ict + coding + library + lab;
+            document.getElementById('fee-total').value = total.toFixed(2);
+            return total;
+        }
+
+        // Add event listeners to all fee inputs
+        const feeInputs = ['fee-tuition', 'fee-uniform', 'fee-exam', 'fee-club', 'fee-books', 'fee-pta', 'fee-ict', 'fee-coding', 'fee-library', 'fee-lab'];
+        feeInputs.forEach(id => {
+            document.getElementById(id).addEventListener('input', calculateTotal);
         });
 
         // Register Fee
-        document.getElementById('fee-form').addEventListener('submit', async (e) => {
+        document.getElementById('fee-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const term = document.getElementById('fee-term').value;
-            const amount = document.getElementById('fee-amount').value;
+            const feeClass = document.getElementById('fee-class').value;
+            const total = calculateTotal();
+            
+            if (total === 0) {
+                document.getElementById('fee-message').className = 'error';
+                document.getElementById('fee-message').textContent = 'Please enter at least one fee amount.';
+                return;
+            }
+            
+            const feeBreakdown = {
+                tuition: parseFloat(document.getElementById('fee-tuition').value) || 0,
+                uniform: parseFloat(document.getElementById('fee-uniform').value) || 0,
+                exam: parseFloat(document.getElementById('fee-exam').value) || 0,
+                club: parseFloat(document.getElementById('fee-club').value) || 0,
+                books: parseFloat(document.getElementById('fee-books').value) || 0,
+                pta: parseFloat(document.getElementById('fee-pta').value) || 0,
+                ict: parseFloat(document.getElementById('fee-ict').value) || 0,
+                coding: parseFloat(document.getElementById('fee-coding').value) || 0,
+                library: parseFloat(document.getElementById('fee-library').value) || 0,
+                lab: parseFloat(document.getElementById('fee-lab').value) || 0
+            };
+            
             const message = document.getElementById('fee-message');
 
-            try {
-                const params = new URLSearchParams({ action: 'addFee', term, amount });
-                const response = await fetch(`${scriptURL}?${params}`);
-                const result = await response.json();
+            makeJsonpRequest({ 
+                action: 'addFee', 
+                term, 
+                class: feeClass,
+                amount: total,
+                breakdown: JSON.stringify(feeBreakdown)
+            }, (result) => {
                 if (result.success) {
                     message.className = 'success';
-                    message.textContent = 'Fee registered successfully!';
+                    message.textContent = 'Fee registered successfully for ' + feeClass + '!';
                     e.target.reset();
+                    document.getElementById('fee-total').value = '0';
                 } else {
                     message.className = 'error';
-                    message.textContent = result.message;
+                    message.textContent = result.message || 'Error registering fee.';
                 }
-            } catch (err) {
-                message.className = 'error';
-                message.textContent = 'Error registering fee.';
-            }
+            });
         });
 
         // Record Payment
-        document.getElementById('payment-form').addEventListener('submit', async (e) => {
+        let currentStudentFees = {};
+
+        // Load student fees when clicking "Load Fees" button
+        document.getElementById('load-student-fees').addEventListener('click', (e) => {
             e.preventDefault();
             const studentID = document.getElementById('payment-student-id').value;
-            const feeID = document.getElementById('payment-fee-id').value;
+
+            if (!studentID) {
+                document.getElementById('payment-message').className = 'error';
+                document.getElementById('payment-message').textContent = 'Please enter a Student ID';
+                return;
+            }
+
+            makeJsonpRequest({ action: 'getStudentFees', studentID }, (result) => {
+                const message = document.getElementById('payment-message');
+                
+                if (result.success && result.student) {
+                    // Display student info
+                    document.getElementById('student-name-display').textContent = result.student.name;
+                    document.getElementById('student-class-display').textContent = result.student.class;
+                    document.getElementById('student-info').style.display = 'block';
+                    document.getElementById('fees-section').style.display = 'block';
+                    document.getElementById('submit-payment').style.display = 'block';
+
+                    // Store current student fees
+                    currentStudentFees = result.fees || {};
+
+                    // Update fee amounts in checkboxes
+                    const feeItems = document.querySelectorAll('input[name="fee-item"]');
+                    feeItems.forEach(item => {
+                        const feeType = item.value;
+                        const amount = currentStudentFees[feeType] || 0;
+                        item.dataset.amount = amount;
+                        item.checked = false; // Uncheck all
+
+                        // Update the displayed amount
+                        const label = item.closest('.fee-checkbox-group');
+                        const amountSpan = label.querySelector('.fee-amount');
+                        amountSpan.textContent = amount.toFixed(2);
+                    });
+
+                    // Reset total
+                    calculatePaymentAmount();
+                    message.className = 'success';
+                    message.textContent = 'Student fees loaded successfully!';
+                } else {
+                    message.className = 'error';
+                    message.textContent = result.message || 'Student not found or no fees registered.';
+                    document.getElementById('student-info').style.display = 'none';
+                    document.getElementById('fees-section').style.display = 'none';
+                    document.getElementById('submit-payment').style.display = 'none';
+                }
+            });
+        });
+
+        // Calculate payment amount based on selected fees
+        function calculatePaymentAmount() {
+            let total = 0;
+            const feeItems = document.querySelectorAll('input[name="fee-item"]:checked');
+            feeItems.forEach(item => {
+                total += parseFloat(item.dataset.amount) || 0;
+            });
+            document.getElementById('payment-amount').value = total.toFixed(2);
+        }
+
+        // Add event listeners to fee checkboxes
+        document.querySelectorAll('input[name="fee-item"]').forEach(checkbox => {
+            checkbox.addEventListener('change', calculatePaymentAmount);
+        });
+
+        // Submit payment form
+        document.getElementById('payment-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const studentID = document.getElementById('payment-student-id').value;
             const amountPaid = document.getElementById('payment-amount').value;
             const date = document.getElementById('payment-date').value;
             const message = document.getElementById('payment-message');
 
-            try {
-                const params = new URLSearchParams({ action: 'addPayment', studentID, feeID, amountPaid, date });
-                const response = await fetch(`${scriptURL}?${params}`);
-                const result = await response.json();
+            if (amountPaid === '0' || amountPaid === '') {
+                message.className = 'error';
+                message.textContent = 'Please select at least one fee to pay.';
+                return;
+            }
+
+            // Get selected fee items
+            const selectedFees = [];
+            document.querySelectorAll('input[name="fee-item"]:checked').forEach(item => {
+                selectedFees.push(item.value);
+            });
+
+            makeJsonpRequest({ 
+                action: 'addPayment', 
+                studentID, 
+                feeItems: selectedFees.join(','),
+                amountPaid,
+                date 
+            }, (result) => {
                 if (result.success) {
                     message.className = 'success';
                     message.textContent = 'Payment recorded successfully!';
                     e.target.reset();
+                    document.getElementById('student-info').style.display = 'none';
+                    document.getElementById('fees-section').style.display = 'none';
+                    document.getElementById('submit-payment').style.display = 'none';
+                    document.getElementById('payment-amount').value = '0';
                 } else {
                     message.className = 'error';
-                    message.textContent = result.message;
+                    message.textContent = result.message || 'Error recording payment.';
                 }
-            } catch (err) {
-                message.className = 'error';
-                message.textContent = 'Error recording payment.';
-            }
+            });
         });
 
         // Search Student
-        document.getElementById('search-form').addEventListener('submit', async (e) => {
+        document.getElementById('search-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const query = document.getElementById('search-query').value;
             const tbody = document.querySelector('#search-results tbody');
-            tbody.innerHTML = '';
+            tbody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
 
-            try {
-                const params = new URLSearchParams({ action: 'searchStudent', query });
-                const response = await fetch(`${scriptURL}?${params}`);
-                const result = await response.json();
-                if (result.success) {
+            makeJsonpRequest({ action: 'searchStudent', query }, (result) => {
+                tbody.innerHTML = '';
+                if (result.success && result.students && result.students.length > 0) {
                     result.students.forEach(student => {
                         const row = `<tr>
                             <td>${student.id}</td>
@@ -252,25 +574,21 @@
                         tbody.innerHTML += row;
                     });
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="4" class="error">' + result.message + '</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="4" class="error">' + (result.message || 'No students found') + '</td></tr>';
                 }
-            } catch (err) {
-                tbody.innerHTML = '<tr><td colspan="4" class="error">Error searching students.</td></tr>';
-            }
+            });
         });
 
         // Generate Report
-        document.getElementById('report-form').addEventListener('submit', async (e) => {
+        document.getElementById('report-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const term = document.getElementById('report-term').value;
             const tbody = document.querySelector('#report-results tbody');
-            tbody.innerHTML = '';
+            tbody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
 
-            try {
-                const params = new URLSearchParams({ action: 'getReport', term });
-                const response = await fetch(`${scriptURL}?${params}`);
-                const result = await response.json();
-                if (result.success) {
+            makeJsonpRequest({ action: 'getReport', term }, (result) => {
+                tbody.innerHTML = '';
+                if (result.success && result.payments && result.payments.length > 0) {
                     result.payments.forEach(payment => {
                         const row = `<tr>
                             <td>${payment.studentID}</td>
@@ -281,11 +599,9 @@
                         tbody.innerHTML += row;
                     });
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="4" class="error">' + result.message + '</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="4" class="error">' + (result.message || 'No data available') + '</td></tr>';
                 }
-            } catch (err) {
-                tbody.innerHTML = '<tr><td colspan="4" class="error">Error generating report.</td></tr>';
-            }
+            });
         });
     </script>
 </body>
